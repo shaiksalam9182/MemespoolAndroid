@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">MemesPool</string>
+
+
+
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="ok">OK</string>
+    <string name="selectImage">Select Image</string>
+    <string name="passwordsNotMatching">Passwords are not matching</string>
+    <string name="invalidEmail">Invalid E-mail</string>
+    <string name="confirmPassIsEmpty">Confirm password is empty</string>
+    <string name="passwordIsEmpty">Password is empty</string>
+    <string name="emailIsEmpty">E-mail is empty</string>
+    <string name="nameIsEmpty">Name is empty</string>
+    <string name="needPermissionsProfilePic">We need permissions to set profile picture</string>
+    <string name="unableToLoadProfilePic">Unable to load profile picture</string>
+    <string name="unbleToContactServer">Unable to contact server</string>
+    <string name="noResponse">No response from server</string>
+    <string name="verifyEmailMessage">Check your inbox/spam for verification mail. Thank you</string>
+    
+    
+</resources>
