@@ -2,7 +2,6 @@
     <string name="app_name">MemesPool</string>
 
 
-
     <string name="register">Register</string>
     <string name="name">Name</string>
     <string name="email">E-mail</string>
@@ -20,7 +19,10 @@
     <string name="unableToLoadProfilePic">Unable to load profile picture</string>
     <string name="unbleToContactServer">Unable to contact server</string>
     <string name="noResponse">No response from server</string>
-    <string name="verifyEmailMessage">Check your inbox/spam for verification mail. Thank you</string>
-    
-    
+    <string name="verifyEmailMessage">An email with verification link sent to your registered mail id. Check your inbox/spam and verify yourself.Thank you</string>
+    <string name="login">Login</string>
+    <string name="submit">Submit</string>
+    <string name="authenticating">Authenticating...</string>
+
+
 </resources>

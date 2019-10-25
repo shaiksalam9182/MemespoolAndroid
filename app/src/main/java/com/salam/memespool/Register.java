@@ -380,12 +380,26 @@ public class Register extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
                     pdLoading.dismiss();
-                    raiseDailog(getResources().getString(R.string.verifyEmailMessage));
+                    raiseDailogVerify(getResources().getString(R.string.verifyEmailMessage));
                 }else {
                     pdLoading.dismiss();
                     Toast.makeText(Register.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private void raiseDailogVerify(String string) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
+        dialog.setMessage(string);
+        dialog.setCancelable(false);
+        dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Register.this,Login.class));
+                finish();
+            }
+        });
+        dialog.show();
     }
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1022190639886",
+    "firebase_url": "https://memespool-229ae.firebaseio.com",
+    "project_id": "memespool-229ae",
+    "storage_bucket": "memespool-229ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022190639886:android:e14f9837a53dc7dd70155f",
+        "android_client_info": {
+          "package_name": "com.salam.memespool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022190639886-b06s1ij6ictod0d4id786nq5seernohk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAxb9y_4908XncLfI53grBkXxwY3sU9pI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022190639886-b06s1ij6ictod0d4id786nq5seernohk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
