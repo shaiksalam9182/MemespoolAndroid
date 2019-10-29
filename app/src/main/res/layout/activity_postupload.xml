@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    tools:context=".Postupload">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/rl_profile"
+        android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="100dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/user"
+        android:id="@+id/civ_profile"
+        android:layout_height="100dp">
+    </de.hdodenhof.circleimageview.CircleImageView>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Username of the user"
+            android:textColor="@color/actionBarColor"
+            android:textSize="20dp"
+            android:layout_toRightOf="@id/civ_profile"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/tv_username"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+
+    </RelativeLayout>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:textColor="@color/actionBarColor"
+        android:textSize="20dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/et_description"
+        android:hint="Description"
+        android:gravity="start"
+        android:layout_margin="10dp"
+        android:layout_below="@id/rl_profile"
+        android:textColorHint="@color/actionBarColor"
+        android:layout_height="100dp">
+
+    </EditText>
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_below="@id/et_description"
+        android:id="@+id/iv_camera"
+        android:src="@drawable/camera"
+        >
+    </ImageView>
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_below="@id/iv_camera"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="Upload"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:layout_height="wrap_content">
+
+    </Button>
+
+</RelativeLayout>

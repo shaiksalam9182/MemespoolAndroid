@@ -391,6 +391,7 @@ public class Register extends AppCompatActivity {
 
     private void raiseDailogVerify(String string) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
+        dialog.setTitle(getResources().getString(R.string.registeredSuccessful));
         dialog.setMessage(string);
         dialog.setCancelable(false);
         dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {

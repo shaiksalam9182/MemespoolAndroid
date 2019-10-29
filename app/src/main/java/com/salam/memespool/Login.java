@@ -4,8 +4,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,8 @@ public class Login extends AppCompatActivity {
     TextInputEditText tiEmail,tiPassword;
     Button btSubmit,btRegister;
     String email,password;
+    SharedPreferences sd;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,9 @@ public class Login extends AppCompatActivity {
 
         btSubmit  = (Button)findViewById(R.id.bt_submit);
         btRegister = (Button)findViewById(R.id.bt_register);
+
+        sd = getSharedPreferences("memespool", Context.MODE_PRIVATE);
+        editor = sd.edit();
 
         btSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,11 +120,16 @@ public class Login extends AppCompatActivity {
             super.onPostExecute(jsonObject);
             pdLoading.dismiss();
             if (jsonObject!=null){
-                Toast.makeText(Login.this,"success dude",Toast.LENGTH_LONG).show();
-                Log.e("loginRes",jsonObject.toString());
+                Toast.makeText(Login.this,getResources().getString(R.string.loginSuccess),Toast.LENGTH_LONG).show();
+                storeUserData(jsonObject);
             }else {
                 Toast.makeText(Login.this,getResources().getString(R.string.noResponse),Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void storeUserData(JSONObject jsonObject) {
+        editor.putString("userData",jsonObject.toString());
+        editor.apply();
     }
 }
