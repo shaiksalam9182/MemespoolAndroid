@@ -120,8 +120,18 @@ public class Login extends AppCompatActivity {
             super.onPostExecute(jsonObject);
             pdLoading.dismiss();
             if (jsonObject!=null){
-                Toast.makeText(Login.this,getResources().getString(R.string.loginSuccess),Toast.LENGTH_LONG).show();
-                storeUserData(jsonObject);
+                Log.e("loginRes",jsonObject.toString());
+                if (jsonObject.optBoolean("success")){
+                    if (jsonObject.optJSONObject("data").optInt("verified")==1){
+                        storeUserData(jsonObject);
+                        startActivity(new Intent(Login.this,Feed.class));
+                        finish();
+                    }else {
+                        Toast.makeText(Login.this,"Please verify your mail to continue",Toast.LENGTH_LONG).show();
+                    }
+                }else {
+                    Toast.makeText(Login.this,jsonObject.optString("message"),Toast.LENGTH_LONG).show();
+                }
             }else {
                 Toast.makeText(Login.this,getResources().getString(R.string.noResponse),Toast.LENGTH_LONG).show();
             }
