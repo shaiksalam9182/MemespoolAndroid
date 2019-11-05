@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(Login.this,Register.class));
             }
         });
-        startActivity(new Intent(Login.this,Feed.class));
+
     }
 
     private void raiseDialog(String string) {
