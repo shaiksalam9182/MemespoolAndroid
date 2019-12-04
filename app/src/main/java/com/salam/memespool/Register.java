@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,9 +25,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -76,9 +81,12 @@ public class Register extends AppCompatActivity {
     };
 
     File SelectedFile;
-    ProgressBar pbProfilePic;
+    ProgressBar pbProfilePic,pbUpload;
     ActionCodeSettings actionCodeSettings;
     ProgressDialog pdLoading;
+    TextView tvPercentGlobal;
+    Dialog uploadDialogue;
+
 
 
     @Override
@@ -207,7 +215,39 @@ public class Register extends AppCompatActivity {
                     cursor.moveToFirst();
                     String realPath = cursor.getString(column_index);
                     SelectedFile = new File(realPath);
-                    new AsyncUploadImage().execute();
+                    final MediaType MEDIATYPE = MediaType.parse("image/*");
+                    MultipartBody multipartBody =
+                            new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                    .addFormDataPart("uploads","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
+
+                    RequestBody req = ProgressHelper.withProgress(multipartBody, new ProgressUIListener() {
+
+                        @Override
+                        public void onUIProgressStart(long totalBytes) {
+                            super.onUIProgressStart(totalBytes);
+                            showDialog(Register.this,"Uploading...");
+                        }
+
+                        @Override
+                        public void onUIProgressChanged(long numBytes, long totalBytes, final float percent, float speed) {
+                            tvPercentGlobal.setText(String.valueOf((int) (percent*100)));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                pbUpload.setProgress((int) (percent*100),true);
+                            }else {
+                                pbUpload.setProgress((int) (percent*100));
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onUIProgressFinish() {
+                            super.onUIProgressFinish();
+                            uploadDialogue.dismiss();
+                            Log.e("uploadPercent", "finished");
+                        }
+                    });
+                    new AsyncUploadImage().execute(req);
                 }catch (NullPointerException e){
                     e.printStackTrace();
                 }
@@ -215,6 +255,27 @@ public class Register extends AppCompatActivity {
 
             }
         }
+    }
+
+
+    public void showDialog(Activity activity, String msg) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.custom_progress_bar);
+
+        final ProgressBar text = (ProgressBar) dialog.findViewById(R.id.progress_horizontal);
+        final TextView tvPercent = dialog.findViewById(R.id.value123);
+        pbUpload = text;
+        tvPercentGlobal = tvPercent;
+
+
+
+        dialog.show();
+        uploadDialogue = dialog;
+
+        Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
 
@@ -234,7 +295,7 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    private class AsyncUploadImage extends AsyncTask<Void,Void, JSONObject> {
+    private class AsyncUploadImage extends AsyncTask<RequestBody,Void, JSONObject> {
 
 
         @Override
@@ -245,35 +306,10 @@ public class Register extends AppCompatActivity {
 
 
         @Override
-        protected JSONObject doInBackground(Void... voids) {
-
-            final MediaType MEDIATYPE = MediaType.parse("image/*");
-            MultipartBody multipartBody =
-             new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("uploads","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
-
-            RequestBody req = ProgressHelper.withProgress(multipartBody, new ProgressUIListener() {
-
-                @Override
-                public void onUIProgressStart(long totalBytes) {
-                    super.onUIProgressStart(totalBytes);
-                }
-
-                @Override
-                public void onUIProgressChanged(long numBytes, long totalBytes, float percent, float speed) {
-                    Log.e("uploadPercent", String.valueOf(percent));
-                }
-
-                @Override
-                public void onUIProgressFinish() {
-                    super.onUIProgressFinish();
-                    Log.e("uploadPercent", "finished");
-                }
-            });
-
+        protected JSONObject doInBackground(RequestBody... voids) {
             Request request = new Request.Builder()
                     .url(Urls.upload)
-                    .post(req)
+                    .post(voids[0])
                     .build();
 
             OkHttpClient okHttpClient = new OkHttpClient();
