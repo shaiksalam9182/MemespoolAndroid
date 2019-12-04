@@ -55,6 +55,8 @@ import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.github.lizhangqu.coreprogress.ProgressHelper;
+import io.github.lizhangqu.coreprogress.ProgressUIListener;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -246,8 +248,28 @@ public class Register extends AppCompatActivity {
         protected JSONObject doInBackground(Void... voids) {
 
             final MediaType MEDIATYPE = MediaType.parse("image/*");
-            RequestBody req = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            MultipartBody multipartBody =
+             new MultipartBody.Builder().setType(MultipartBody.FORM)
                     .addFormDataPart("uploads","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
+
+            RequestBody req = ProgressHelper.withProgress(multipartBody, new ProgressUIListener() {
+
+                @Override
+                public void onUIProgressStart(long totalBytes) {
+                    super.onUIProgressStart(totalBytes);
+                }
+
+                @Override
+                public void onUIProgressChanged(long numBytes, long totalBytes, float percent, float speed) {
+                    Log.e("uploadPercent", String.valueOf(percent));
+                }
+
+                @Override
+                public void onUIProgressFinish() {
+                    super.onUIProgressFinish();
+                    Log.e("uploadPercent", "finished");
+                }
+            });
 
             Request request = new Request.Builder()
                     .url(Urls.upload)
