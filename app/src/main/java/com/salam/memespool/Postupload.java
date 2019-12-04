@@ -1,25 +1,36 @@
 package com.salam.memespool;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONException;
@@ -27,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -40,10 +52,18 @@ public class Postupload extends AppCompatActivity {
     RequestBody requestBody;
     MultipartBody.Builder mRequestBody;
     MaterialToolbar postToolbar;
-    Button btUpload;
-    GridLayout gridLayout;
+
     int deviceWidth;
     int imageWidth,imageHeight;
+    ArrayList<File> imagesList;
+    ViewPager vpImages;
+    RecyclerView rvImages;
+    RecyclerView.SmoothScroller smoothScroller;
+    LinearLayoutManager layoutManager;
+    LinearLayout llPrevious,llCurrent;
+    int clickedPostion;
+    ImagesAdapter imagesAdapter;
+    TextView tvPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,26 +79,66 @@ public class Postupload extends AppCompatActivity {
                 finish();
             }
         });
-        postToolbar.setTitle("Post Memes");
-        btUpload = (Button)findViewById(R.id.bt_upload);
-        gridLayout = (GridLayout)findViewById(R.id.grid_layout);
-        gridLayout.setColumnCount(2);
-        gridLayout.setRowCount(8);
+
+
+        vpImages = (ViewPager)findViewById(R.id.vp_images);
+        rvImages = (RecyclerView)findViewById(R.id.rv_images);
+        tvPost = (TextView)findViewById(R.id.tv_post);
+
+        tvPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i=0;i<imagesList.size();i++){
+                    new AsyncSendImage().execute(imagesList.get(i));
+                    new AsyncSendImages().execute();
+                }
+
+            }
+        });
+
+        vpImages.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.e("position",position+"");
+                layoutManager.scrollToPositionWithOffset(position,15);
+                try {
+                    llPrevious.setBackgroundColor(Color.parseColor("#000000"));
+                    rvImages.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.ll_img).setBackgroundColor(Color.parseColor("#000000"));
+                    RecyclerView.ViewHolder holder = (RecyclerView.ViewHolder) rvImages.findViewHolderForAdapterPosition(position);
+                    holder.itemView.findViewById(R.id.ll_img).setBackgroundColor(Color.parseColor("#ffffff"));
+
+                    llPrevious = (LinearLayout) rvImages.findViewHolderForAdapterPosition(position).itemView.findViewById(R.id.ll_img);
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        smoothScroller = new LinearSmoothScroller(this){
+            @Override
+            protected int getHorizontalSnapPreference() {
+                return super.getHorizontalSnapPreference();
+            }
+        };
+
+
         deviceWidth = getResources().getDisplayMetrics().widthPixels;
         imageWidth = deviceWidth/2;
         imageHeight = (int) (imageWidth/1.87);
         mRequestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
 
-
-
-        btUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AsyncSendImages().execute();
-            }
-        });
-
+        imagesList = new ArrayList<File>();
 
 
         Intent selectImage = new Intent();
@@ -102,7 +162,11 @@ public class Postupload extends AppCompatActivity {
                             Uri imagePath = data.getClipData().getItemAt(i).getUri();
                             getimagefilepaxth(imagePath);
                         }
-
+                        vpImages.setAdapter(new SliderAdapter(Postupload.this,imagesList));
+                        layoutManager = new LinearLayoutManager(Postupload.this,LinearLayoutManager.HORIZONTAL,false);
+                        rvImages.setLayoutManager(layoutManager);
+                        imagesAdapter = new ImagesAdapter(Postupload.this,imagesList);
+                        rvImages.setAdapter(imagesAdapter);
                     }else {
                         Toast.makeText(Postupload.this,"Returned Null",Toast.LENGTH_LONG).show();
                     }
@@ -129,14 +193,8 @@ public class Postupload extends AppCompatActivity {
         cursor.moveToFirst();
         String realPath = cursor.getString(column_index);
         File file = new File(realPath);
-        Log.e("fikles",file.toString()) ;
-        ImageView oImageView = new ImageView(this);
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        imagesList.add(file);
 
-        oImageView.setImageBitmap(bitmap);
-
-        oImageView.setLayoutParams(new ViewGroup.LayoutParams(imageWidth,imageHeight));
-        gridLayout.addView(oImageView);
         final MediaType MEDIATYPE = MediaType.parse("image/*");
         requestBody = RequestBody.create(MEDIATYPE,file);
         mRequestBody.addFormDataPart("uploads","imageName.png",requestBody);
@@ -158,6 +216,91 @@ public class Postupload extends AppCompatActivity {
         @Override
         protected JSONObject doInBackground(Void... voids) {
 
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            pdLoading.dismiss();
+            if (jsonObject!=null){
+                if (jsonObject.optBoolean("success")){
+                    Toast.makeText(Postupload.this,"Successfully uploaded",Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(Postupload.this,jsonObject.optString("message"),Toast.LENGTH_LONG);
+                }
+            }else {
+                Toast.makeText(Postupload.this,"Something went wrong",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MyViewHolder> {
+
+        Context mContext;
+        ArrayList<File> imagesList;
+
+        public ImagesAdapter(Postupload postupload, ArrayList<File> imagesList) {
+            this.imagesList = imagesList;
+            mContext = postupload;
+
+        }
+
+        @NonNull
+        @Override
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.custom_horizontal_image_view, parent, false);
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+            Glide.with(mContext).load(imagesList.get(position)).into(holder.ivImage);
+            if(position==0){
+                llPrevious = holder.llImg;
+                holder.llImg.setBackgroundColor(Color.parseColor("#ffffff"));
+            }
+            holder.ivImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickedPostion = position;
+                    llPrevious.setBackgroundColor(Color.parseColor("#000000"));
+                    llCurrent = holder.llImg;
+                    holder.llImg.setBackgroundColor(Color.parseColor("#ffffff"));
+                    llPrevious = llCurrent;
+                    vpImages.setCurrentItem(position,true);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return imagesList.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+            ImageView ivImage;
+            LinearLayout llImg;
+            public MyViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                ivImage = (ImageView)itemView.findViewById(R.id.iv_hz_img);
+                llImg = (LinearLayout)itemView.findViewById(R.id.ll_img);
+
+            }
+        }
+    }
+
+    private class AsyncSendImage extends AsyncTask<File,Void,JSONObject>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JSONObject doInBackground(File... files) {
             RequestBody req = mRequestBody.build();
 
             Request request = new Request.Builder()
@@ -174,17 +317,12 @@ public class Postupload extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+
         }
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            pdLoading.dismiss();
-            if (jsonObject!=null){
-                Log.e("recData",jsonObject.toString());
-            }else {
-                Toast.makeText(Postupload.this,"somethingworkd",Toast.LENGTH_LONG).show();
-            }
         }
     }
 }
