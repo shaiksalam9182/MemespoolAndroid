@@ -25,6 +25,7 @@
     <string name="authenticating">Authenticating...</string>
     <string name="registeredSuccessful">Successfully registered</string>
     <string name="loginSuccess">Login is successful</string>
+    <string name="uploading">Uploading</string>
 
 
 </resources>

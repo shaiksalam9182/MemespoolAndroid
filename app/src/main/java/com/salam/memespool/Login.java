@@ -123,13 +123,9 @@ public class Login extends AppCompatActivity {
             if (jsonObject!=null){
                 Log.e("loginRes",jsonObject.toString());
                 if (jsonObject.optBoolean("success")){
-                    if (jsonObject.optJSONObject("data").optInt("verified")==1){
                         storeUserData(jsonObject);
                         startActivity(new Intent(Login.this,Feed.class));
                         finish();
-                    }else {
-                        Toast.makeText(Login.this,"Please verify your mail to continue",Toast.LENGTH_LONG).show();
-                    }
                 }else {
                     Toast.makeText(Login.this,jsonObject.optString("message"),Toast.LENGTH_LONG).show();
                 }

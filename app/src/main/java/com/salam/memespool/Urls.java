@@ -1,7 +1,7 @@
 package com.salam.memespool;
 
 public class Urls {
-    public static final String base = "http://api.memespool.com/";
+    public static final String base = "https://api.memespool.com/";
 
     public static final String register = base+"register";
     public static final String login = base+"login";

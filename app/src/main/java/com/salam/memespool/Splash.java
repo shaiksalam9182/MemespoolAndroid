@@ -32,8 +32,10 @@ public class Splash extends AppCompatActivity {
             public void run() {
                 if (!userData.equalsIgnoreCase("")){
                     startActivity(new Intent(Splash.this,Feed.class));
+                    finish();
                 }else {
                     startActivity(new Intent(Splash.this,Login.class));
+                    finish();
                 }
             }
         }, 3000);
