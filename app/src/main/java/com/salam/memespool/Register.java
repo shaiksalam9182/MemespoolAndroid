@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,9 +25,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -55,6 +60,8 @@ import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.github.lizhangqu.coreprogress.ProgressHelper;
+import io.github.lizhangqu.coreprogress.ProgressUIListener;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -74,9 +81,12 @@ public class Register extends AppCompatActivity {
     };
 
     File SelectedFile;
-    ProgressBar pbProfilePic;
+    ProgressBar pbProfilePic,pbUpload;
     ActionCodeSettings actionCodeSettings;
     ProgressDialog pdLoading;
+    TextView tvPercentGlobal;
+    Dialog uploadDialogue;
+
 
 
     @Override
@@ -205,7 +215,39 @@ public class Register extends AppCompatActivity {
                     cursor.moveToFirst();
                     String realPath = cursor.getString(column_index);
                     SelectedFile = new File(realPath);
-                    new AsyncUploadImage().execute();
+                    final MediaType MEDIATYPE = MediaType.parse("image/*");
+                    MultipartBody multipartBody =
+                            new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                    .addFormDataPart("image","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
+
+                    RequestBody req = ProgressHelper.withProgress(multipartBody, new ProgressUIListener() {
+
+                        @Override
+                        public void onUIProgressStart(long totalBytes) {
+                            super.onUIProgressStart(totalBytes);
+                            showDialog(Register.this,"Uploading...");
+                        }
+
+                        @Override
+                        public void onUIProgressChanged(long numBytes, long totalBytes, final float percent, float speed) {
+                            tvPercentGlobal.setText(String.valueOf((int) (percent*100)));
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                pbUpload.setProgress((int) (percent*100),true);
+                            }else {
+                                pbUpload.setProgress((int) (percent*100));
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onUIProgressFinish() {
+                            super.onUIProgressFinish();
+                            uploadDialogue.dismiss();
+                            Log.e("uploadPercent", "finished");
+                        }
+                    });
+                    new AsyncUploadImage().execute(req);
                 }catch (NullPointerException e){
                     e.printStackTrace();
                 }
@@ -213,6 +255,27 @@ public class Register extends AppCompatActivity {
 
             }
         }
+    }
+
+
+    public void showDialog(Activity activity, String msg) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.custom_progress_bar);
+
+        final ProgressBar text = (ProgressBar) dialog.findViewById(R.id.progress_horizontal);
+        final TextView tvPercent = dialog.findViewById(R.id.value123);
+        pbUpload = text;
+        tvPercentGlobal = tvPercent;
+
+
+
+        dialog.show();
+        uploadDialogue = dialog;
+
+        Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
     }
 
 
@@ -232,7 +295,7 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    private class AsyncUploadImage extends AsyncTask<Void,Void, JSONObject> {
+    private class AsyncUploadImage extends AsyncTask<RequestBody,Void, JSONObject> {
 
 
         @Override
@@ -243,15 +306,10 @@ public class Register extends AppCompatActivity {
 
 
         @Override
-        protected JSONObject doInBackground(Void... voids) {
-
-            final MediaType MEDIATYPE = MediaType.parse("image/*");
-            RequestBody req = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("uploads","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
-
+        protected JSONObject doInBackground(RequestBody... voids) {
             Request request = new Request.Builder()
                     .url(Urls.upload)
-                    .post(req)
+                    .post(voids[0])
                     .build();
 
             OkHttpClient okHttpClient = new OkHttpClient();
@@ -274,9 +332,9 @@ public class Register extends AppCompatActivity {
 
             if (jsonObject!=null){
                 if (jsonObject.optBoolean("success")){
-                    uploadedImage = jsonObject.optJSONArray("image").optJSONObject(0).optString("filename");
+                    uploadedImage = jsonObject.optString("image_url");
 
-                    Glide.with(Register.this).load(Urls.getImage+"/"+uploadedImage).addListener(new RequestListener<Drawable>() {
+                    Glide.with(Register.this).load(uploadedImage).addListener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             pbProfilePic.setVisibility(View.GONE);
@@ -337,7 +395,8 @@ public class Register extends AppCompatActivity {
             if (jsonObject!=null){
                 if (jsonObject.optBoolean("success")){
                     receivedUserId = jsonObject.optString("user_id");
-                    registerWithFirebase();
+                    pdLoading.dismiss();
+                    raiseDailogVerify(getResources().getString(R.string.registeredSuccessful));
 
                 }else {
                     pdLoading.dismiss();
@@ -350,42 +409,20 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    private void registerWithFirebase() {
-        actionCodeSettings = ActionCodeSettings.newBuilder()
-                .setUrl(Urls.verifyEmail+receivedUserId)
-                .setHandleCodeInApp(false)
-                .setIOSBundleId("com.salam.memespool")
-                .setAndroidPackageName("com.salam.memespool",false,null).build();
 
 
-        final FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            sendVerificationEmail(auth);
-                        }else {
-                            pdLoading.dismiss();
-                            Toast.makeText(Register.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
-    private void sendVerificationEmail(FirebaseAuth auth) {
-        FirebaseUser user = auth.getCurrentUser();
-        user.sendEmailVerification(actionCodeSettings).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void raiseDailogVerify(String string) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
+        dialog.setTitle(getResources().getString(R.string.register));
+        dialog.setMessage(string);
+        dialog.setCancelable(false);
+        dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    pdLoading.dismiss();
-                    raiseDailog(getResources().getString(R.string.verifyEmailMessage));
-                }else {
-                    pdLoading.dismiss();
-                    Toast.makeText(Register.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Register.this,Login.class));
+                finish();
             }
         });
+        dialog.show();
     }
 }

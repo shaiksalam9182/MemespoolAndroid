@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_gravity="center"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="vertical"
+        tools:context=".Login">
+
+
+<!--        <com.google.android.material.appbar.MaterialToolbar-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:background="@color/actionBarColor"-->
+<!--            app:titleTextColor="@color/background"-->
+<!--            android:id="@+id/register_toolbar"-->
+<!--            android:layout_height="wrap_content">-->
+
+
+<!--        </com.google.android.material.appbar.MaterialToolbar>-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/pb_profile_pic"
+                    android:layout_height="wrap_content">
+
+                </ProgressBar>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="100dp"
+                    android:src="@drawable/user"
+                    android:layout_marginBottom="50dp"
+                    android:id="@+id/civ_profile"
+                    android:layout_centerInParent="true"
+                    android:layout_height="100dp">
+                </de.hdodenhof.circleimageview.CircleImageView>
+
+            </RelativeLayout>
+
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/login"
+                android:textColor="@color/actionBarColor"
+                android:textSize="20dp"
+                android:layout_height="wrap_content">
+
+
+            </TextView>
+
+
+
+
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:textColorHint="@color/actionBarColor"
+                app:boxBackgroundColor="@color/background"
+                app:boxStrokeColor="@color/actionBarColor"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:hint="@string/email"
+                    android:id="@+id/ti_email"
+                    android:maxLines="1"
+                    android:layout_height="wrap_content">
+
+                </com.google.android.material.textfield.TextInputEditText>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/background"
+                android:textColorHint="@color/actionBarColor"
+                app:boxStrokeColor="@color/actionBarColor"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:id="@+id/ti_password"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:hint="@string/password">
+
+                </com.google.android.material.textfield.TextInputEditText>
+
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/background"
+                android:text="@string/submit"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bt_submit"
+                android:background="@color/actionBarColor"
+                android:textAllCaps="false"
+                android:layout_height="wrap_content">
+
+            </Button>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/background"
+                android:text="@string/register"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bt_register"
+                android:background="@color/actionBarColor"
+                android:textAllCaps="false"
+                android:layout_height="wrap_content">
+
+            </Button>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>
