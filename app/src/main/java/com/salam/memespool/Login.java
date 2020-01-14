@@ -136,7 +136,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void storeUserData(JSONObject jsonObject) {
-        editor.putString("userData",jsonObject.toString());
+        editor.putString("userData",jsonObject.optString("data"));
         editor.apply();
     }
 }
