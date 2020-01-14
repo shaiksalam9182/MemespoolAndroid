@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.MaterialToolbar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,6 +66,13 @@ public class Postupload extends AppCompatActivity {
     int clickedPostion;
     ImagesAdapter imagesAdapter;
     TextView tvPost;
+    ProgressDialog pdLoading;
+    int totalCount,currentItem,statusItem;
+    JSONArray uploadedURLS;
+    String userData;
+    JSONObject userDataObject;
+    SharedPreferences sd;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +88,17 @@ public class Postupload extends AppCompatActivity {
                 finish();
             }
         });
+        pdLoading = new ProgressDialog(Postupload.this);
+
+        sd = getSharedPreferences("memespool",Context.MODE_PRIVATE);
+        editor = sd.edit();
+
+        userData = sd.getString("userData","");
+        try {
+            userDataObject = new JSONObject(userData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         vpImages = (ViewPager)findViewById(R.id.vp_images);
@@ -88,10 +108,12 @@ public class Postupload extends AppCompatActivity {
         tvPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i=0;i<imagesList.size();i++){
-                    new AsyncSendImage().execute(imagesList.get(i));
-                    new AsyncSendImages().execute();
-                }
+                totalCount = imagesList.size();
+                currentItem = 0;
+                statusItem =1;
+                uploadedURLS = new JSONArray();
+                new AsyncSendImage().execute(imagesList.get(0));
+
 
             }
         });
@@ -198,44 +220,10 @@ public class Postupload extends AppCompatActivity {
         imagesList.add(file);
 
         final MediaType MEDIATYPE = MediaType.parse("image/*");
-        requestBody = RequestBody.create(MEDIATYPE,file);
-        mRequestBody.addFormDataPart("uploads","imageName.png",requestBody);
+
 
     }
 
-    private class AsyncSendImages extends AsyncTask<Void,Void, JSONObject> {
-
-        ProgressDialog pdLoading = new ProgressDialog(Postupload.this);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pdLoading.setMessage("uploading....");
-            pdLoading.setCancelable(false);
-            pdLoading.show();
-        }
-
-        @Override
-        protected JSONObject doInBackground(Void... voids) {
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-            pdLoading.dismiss();
-            if (jsonObject!=null){
-                if (jsonObject.optBoolean("success")){
-                    Toast.makeText(Postupload.this,"Successfully uploaded",Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(Postupload.this,jsonObject.optString("message"),Toast.LENGTH_LONG);
-                }
-            }else {
-                Toast.makeText(Postupload.this,"Something went wrong",Toast.LENGTH_LONG).show();
-            }
-        }
-    }
 
     private class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.MyViewHolder> {
 
@@ -259,18 +247,10 @@ public class Postupload extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
             Glide.with(mContext).load(imagesList.get(position)).into(holder.ivImage);
-            if(position==0){
-                llPrevious = holder.llImg;
-                holder.llImg.setBackgroundColor(Color.parseColor("#ffffff"));
-            }
+
             holder.ivImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickedPostion = position;
-                    llPrevious.setBackgroundColor(Color.parseColor("#000000"));
-                    llCurrent = holder.llImg;
-                    holder.llImg.setBackgroundColor(Color.parseColor("#ffffff"));
-                    llPrevious = llCurrent;
                     vpImages.setCurrentItem(position,true);
                 }
             });
@@ -299,16 +279,22 @@ public class Postupload extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            pdLoading.setMessage("Uploading "+ statusItem+"/"+totalCount );
+            pdLoading.setCancelable(false);
+            pdLoading.show();
         }
 
         @Override
         protected JSONObject doInBackground(File... files) {
-            RequestBody req = mRequestBody.build();
+            final MediaType MEDIATYPE = MediaType.parse("image/*");
+            RequestBody req = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("image","profile.png",RequestBody.create(MEDIATYPE,files[0])).build();
 
             Request request = new Request.Builder()
                     .url(Urls.upload)
                     .post(req)
                     .build();
+
             OkHttpClient okHttpClient = new OkHttpClient();
             try {
                 Response response = okHttpClient.newCall(request).execute();
@@ -318,6 +304,8 @@ public class Postupload extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
             return null;
 
         }
@@ -325,6 +313,69 @@ public class Postupload extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
+            if (jsonObject!=null){
+                uploadedURLS.put(jsonObject.optString("image_url"));
+            }
+           if (currentItem<totalCount-1){
+               currentItem++;
+               statusItem = currentItem+1;
+
+               new AsyncSendImage().execute(imagesList.get(currentItem));
+           }else {
+               pdLoading.dismiss();
+               sendPost();
+           }
+        }
+    }
+
+    private void sendPost() {
+        new AsyncSendPost().execute();
+    }
+
+    class AsyncSendPost extends AsyncTask<Void,Void,JSONObject>{
+
+        ProgressDialog pdLoading = new ProgressDialog(Postupload.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pdLoading.setMessage("Publishing your post..");
+            pdLoading.setCancelable(false);
+            pdLoading.show();
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... voids) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("user_id",userDataObject.optString("user_id"));
+                data.put("token",userDataObject.optString("token"));
+                data.put("images",uploadedURLS);
+                data.put("description","Testing....");
+                PostHelper postHelper = new PostHelper(Postupload.this);
+                return postHelper.Post(Urls.sendPost,data.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject object) {
+            super.onPostExecute(object);
+            pdLoading.dismiss();
+            if (object!=null){
+                if (object.optBoolean("success")){
+                    Toast.makeText(Postupload.this,object.optString("message"),Toast.LENGTH_LONG).show();
+                    finish();
+                }else {
+                    Toast.makeText(Postupload.this,object.optString("message"),Toast.LENGTH_LONG).show();
+                }
+            }else {
+                Toast.makeText(Postupload.this,"something went wrong",Toast.LENGTH_LONG).show();
+            }
         }
     }
 }
