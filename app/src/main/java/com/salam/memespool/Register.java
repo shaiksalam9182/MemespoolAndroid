@@ -218,7 +218,7 @@ public class Register extends AppCompatActivity {
                     final MediaType MEDIATYPE = MediaType.parse("image/*");
                     MultipartBody multipartBody =
                             new MultipartBody.Builder().setType(MultipartBody.FORM)
-                                    .addFormDataPart("uploads","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
+                                    .addFormDataPart("image","profile.png",RequestBody.create(MEDIATYPE,SelectedFile)).build();
 
                     RequestBody req = ProgressHelper.withProgress(multipartBody, new ProgressUIListener() {
 
@@ -332,9 +332,9 @@ public class Register extends AppCompatActivity {
 
             if (jsonObject!=null){
                 if (jsonObject.optBoolean("success")){
-                    uploadedImage = jsonObject.optJSONArray("image").optJSONObject(0).optString("filename");
+                    uploadedImage = jsonObject.optString("image_url");
 
-                    Glide.with(Register.this).load(Urls.getImage+"/"+uploadedImage).addListener(new RequestListener<Drawable>() {
+                    Glide.with(Register.this).load(uploadedImage).addListener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             pbProfilePic.setVisibility(View.GONE);
@@ -395,7 +395,8 @@ public class Register extends AppCompatActivity {
             if (jsonObject!=null){
                 if (jsonObject.optBoolean("success")){
                     receivedUserId = jsonObject.optString("user_id");
-                    registerWithFirebase();
+                    pdLoading.dismiss();
+                    raiseDailogVerify(getResources().getString(R.string.registeredSuccessful));
 
                 }else {
                     pdLoading.dismiss();
@@ -408,48 +409,11 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    private void registerWithFirebase() {
-        actionCodeSettings = ActionCodeSettings.newBuilder()
-                .setUrl(Urls.verifyEmail+receivedUserId)
-                .setHandleCodeInApp(false)
-                .setIOSBundleId("com.salam.memespool")
-                .setAndroidPackageName("com.salam.memespool",false,null).build();
 
-
-        final FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            sendVerificationEmail(auth);
-                        }else {
-                            pdLoading.dismiss();
-                            Toast.makeText(Register.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
-    private void sendVerificationEmail(FirebaseAuth auth) {
-        FirebaseUser user = auth.getCurrentUser();
-        user.sendEmailVerification(actionCodeSettings).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    pdLoading.dismiss();
-                    raiseDailogVerify(getResources().getString(R.string.verifyEmailMessage));
-                }else {
-                    pdLoading.dismiss();
-                    Toast.makeText(Register.this,task.getException().getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
 
     private void raiseDailogVerify(String string) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
-        dialog.setTitle(getResources().getString(R.string.registeredSuccessful));
+        dialog.setTitle(getResources().getString(R.string.register));
         dialog.setMessage(string);
         dialog.setCancelable(false);
         dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {

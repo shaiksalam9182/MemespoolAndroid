@@ -178,6 +178,8 @@ public class Postupload extends AppCompatActivity {
                 }
 
 
+            }else {
+                finish();
             }
         }
     }
