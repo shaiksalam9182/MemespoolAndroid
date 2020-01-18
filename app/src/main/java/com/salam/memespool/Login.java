@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,7 +25,7 @@ import java.io.IOException;
 
 public class Login extends AppCompatActivity {
 
-    TextInputEditText tiEmail,tiPassword;
+    EditText tiEmail,tiPassword;
     Button btSubmit,btRegister;
     String email,password;
     SharedPreferences sd;
@@ -35,8 +36,8 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        tiEmail = (TextInputEditText)findViewById(R.id.ti_email);
-        tiPassword = (TextInputEditText)findViewById(R.id.ti_password);
+        tiEmail = (EditText)findViewById(R.id.ti_email);
+        tiPassword = (EditText)findViewById(R.id.ti_password);
 
         btSubmit  = (Button)findViewById(R.id.bt_submit);
         btRegister = (Button)findViewById(R.id.bt_register);

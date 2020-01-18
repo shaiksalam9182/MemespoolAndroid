@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#283593</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">#BDCBDC</color>
     <color name="colorAccent">#D81B60</color>
 
     <color name="actionBarColor">#283593</color>
-    <color name="background">#ffffff</color>
+    <color name="background">#BDCBDC</color>
+    <color name="textColor">#BDCBDC</color>
 
 
 </resources>

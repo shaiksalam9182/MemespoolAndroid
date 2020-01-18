@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -29,6 +30,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,26 +40,15 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.ActionCodeSettings;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.google.firebase.auth.ActionCodeSettings;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.regex.Pattern;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.lizhangqu.coreprogress.ProgressHelper;
@@ -71,8 +62,8 @@ import okhttp3.Response;
 
 public class Register extends AppCompatActivity {
 
-    MaterialToolbar toolbar;
-    TextInputEditText tiName,tiEmail,tiPassword,tiCpassword;
+    Toolbar toolbar;
+    EditText tiName,tiEmail,tiPassword,tiCpassword;
     Button btRegister;
     String name,email,password,cPassword,uploadedImage,receivedUserId;
     CircleImageView civProfileImage;
@@ -94,7 +85,7 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        toolbar = (MaterialToolbar)findViewById(R.id.register_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.register_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getResources().getString(R.string.register));
@@ -109,10 +100,10 @@ public class Register extends AppCompatActivity {
 
 
 
-        tiName = (TextInputEditText)findViewById(R.id.tiName);
-        tiEmail = (TextInputEditText)findViewById(R.id.ti_email);
-        tiPassword = (TextInputEditText)findViewById(R.id.ti_password);
-        tiCpassword = (TextInputEditText)findViewById(R.id.ti_cpassword);
+        tiName = (EditText)findViewById(R.id.tiName);
+        tiEmail = (EditText)findViewById(R.id.ti_email);
+        tiPassword = (EditText)findViewById(R.id.ti_password);
+        tiCpassword = (EditText)findViewById(R.id.ti_cpassword);
         civProfileImage = (CircleImageView)findViewById(R.id.civ_profile) ;
         pbProfilePic = (ProgressBar)findViewById(R.id.pb_profile_pic);
 
