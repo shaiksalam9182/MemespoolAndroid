@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:background="#000000"
     tools:context=".Postupload">
-    <com.google.android.material.appbar.MaterialToolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:background="@android:color/transparent"
         android:id="@+id/post_toolbar"
@@ -38,7 +38,7 @@
         </RelativeLayout>
 
 
-    </com.google.android.material.appbar.MaterialToolbar>
+    </androidx.appcompat.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
         android:fillViewport="true"

@@ -3,6 +3,7 @@ package com.salam.memespool;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,15 +25,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridLayout;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +52,7 @@ public class Postupload extends AppCompatActivity {
 
     RequestBody requestBody;
     MultipartBody.Builder mRequestBody;
-    MaterialToolbar postToolbar;
+    Toolbar postToolbar;
 
     int deviceWidth;
     int imageWidth,imageHeight;
@@ -79,7 +78,7 @@ public class Postupload extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_postupload);
 
-        postToolbar = (MaterialToolbar)findViewById(R.id.post_toolbar);
+        postToolbar = (Toolbar) findViewById(R.id.post_toolbar);
         setSupportActionBar(postToolbar);
         postToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
         postToolbar.setNavigationOnClickListener(new View.OnClickListener() {

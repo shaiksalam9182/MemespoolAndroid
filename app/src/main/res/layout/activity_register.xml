@@ -13,7 +13,7 @@
     tools:context=".Register">
 
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:background="@color/actionBarColor"
         app:titleTextColor="@color/background"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content">
 
 
-    </com.google.android.material.appbar.MaterialToolbar>
+    </androidx.appcompat.widget.Toolbar>
 
 
     <LinearLayout
@@ -80,53 +80,34 @@
 
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:boxBackgroundColor="@color/background"
-        app:boxStrokeColor="@color/actionBarColor"
-        android:textColorHint="@color/actionBarColor"
-        android:hint="@string/name">
 
-        <com.google.android.material.textfield.TextInputEditText
+
+        <EditText
             android:layout_width="match_parent"
             android:id="@+id/tiName"
             android:maxLines="1"
             android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
 
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:textColorHint="@color/actionBarColor"
-        app:boxBackgroundColor="@color/background"
-        app:boxStrokeColor="@color/actionBarColor"
-        android:layout_height="wrap_content">
 
 
-        <com.google.android.material.textfield.TextInputEditText
+
+        <EditText
             android:layout_width="match_parent"
             android:hint="@string/email"
             android:id="@+id/ti_email"
             android:maxLines="1"
             android:layout_height="wrap_content">
 
-        </com.google.android.material.textfield.TextInputEditText>
+        </EditText>
 
 
-    </com.google.android.material.textfield.TextInputLayout>
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        app:boxBackgroundColor="@color/background"
-        android:textColorHint="@color/actionBarColor"
-        app:boxStrokeColor="@color/actionBarColor"
-        android:layout_height="wrap_content">
 
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:layout_width="match_parent"
             android:id="@+id/ti_password"
             android:layout_height="wrap_content"
@@ -134,21 +115,14 @@
             android:maxLines="1"
             android:hint="@string/password">
 
-        </com.google.android.material.textfield.TextInputEditText>
+        </EditText>
 
 
 
-    </com.google.android.material.textfield.TextInputLayout>
 
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:textColorHint="@color/actionBarColor"
-        android:layout_height="wrap_content"
-        app:boxStrokeColor="@color/actionBarColor"
-        app:boxBackgroundColor="@color/background">
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -156,8 +130,7 @@
             android:inputType="textPassword"
             android:hint="@string/confirmPassword">
 
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
+        </EditText>
 
 
     <Button
