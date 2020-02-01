@@ -6,7 +6,7 @@
 
     <color name="actionBarColor">#283593</color>
     <color name="background">#BDCBDC</color>
-    <color name="textColor">#BDCBDC</color>
+    <color name="textColor">#fff</color>
 
 
 </resources>

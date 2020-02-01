@@ -3,6 +3,7 @@
 
 
     <string name="register">Register</string>
+    <string name="register_message">Not registered? Sign up here</string>
     <string name="name">Name</string>
     <string name="email">E-mail</string>
     <string name="password">Password</string>

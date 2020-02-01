@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -85,17 +86,23 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.parseColor("#21d6d3"));
+        }
+
         toolbar = (Toolbar) findViewById(R.id.register_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getResources().getString(R.string.register));
+        toolbar.setTitleTextColor(getResources().getColor(R.color.textColor));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        pdLoading = new ProgressDialog(Register.this);
+        pdLoading = new ProgressDialog(Register.this,R.style.AlertDialogTheme);
 
 
 
@@ -178,7 +185,7 @@ public class Register extends AppCompatActivity {
 
 
     public void raiseDailog(String message){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this,R.style.AlertDialogTheme);
         dialog.setMessage(message);
         dialog.setCancelable(false);
         dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {

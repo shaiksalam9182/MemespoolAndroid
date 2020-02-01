@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/actionBarColor</item>
         <item name="colorPrimaryDark">@color/actionBarColor</item>
         <item name="colorAccent">@color/actionBarColor</item>
-        <item name="android:statusBarColor">#13547a</item>
+        <item name="android:statusBarColor">#fff</item>
     </style>
+
+
 </resources>
