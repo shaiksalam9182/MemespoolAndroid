@@ -8,14 +8,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/gradient_background"
     android:orientation="vertical"
     tools:context=".Register">
 
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:background="@color/actionBarColor"
+        android:background="@android:color/transparent"
         app:titleTextColor="@color/background"
         android:id="@+id/register_toolbar"
         android:layout_height="wrap_content">
@@ -40,13 +40,14 @@
                 android:layout_width="wrap_content"
                 android:layout_centerInParent="true"
                 android:id="@+id/pb_profile_pic"
+                android:visibility="gone"
                 android:layout_height="wrap_content">
 
             </ProgressBar>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="100dp"
-                android:src="@drawable/user"
+                android:src="@drawable/ic_person_black_24dp"
                 android:layout_marginBottom="50dp"
                 android:id="@+id/civ_profile"
                 android:layout_centerInParent="true"
@@ -71,7 +72,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:text="@string/register"
-            android:textColor="@color/actionBarColor"
+            android:textColor="@color/textColor"
             android:textSize="20dp"
             android:layout_height="wrap_content">
 
@@ -86,6 +87,9 @@
             android:layout_width="match_parent"
             android:id="@+id/tiName"
             android:maxLines="1"
+            android:layout_marginTop="10dp"
+            android:hint="@string/name"
+            android:textColorHint="@color/textColor"
             android:layout_height="wrap_content"/>
 
 
@@ -98,6 +102,8 @@
             android:hint="@string/email"
             android:id="@+id/ti_email"
             android:maxLines="1"
+            android:layout_marginTop="10dp"
+            android:textColorHint="@color/textColor"
             android:layout_height="wrap_content">
 
         </EditText>
@@ -113,6 +119,8 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:maxLines="1"
+            android:layout_marginTop="10dp"
+            android:textColorHint="@color/textColor"
             android:hint="@string/password">
 
         </EditText>
@@ -126,7 +134,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:layout_marginTop="10dp"
             android:id="@+id/ti_cpassword"
+            android:textColorHint="@color/textColor"
             android:inputType="textPassword"
             android:hint="@string/confirmPassword">
 
@@ -136,11 +146,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/background"
+        android:textColor="@color/actionBarColor"
         android:text="@string/register"
         android:layout_marginTop="20dp"
         android:id="@+id/bt_register"
-        android:background="@color/actionBarColor"
+        android:background="@drawable/rounded_button"
         android:textAllCaps="false"
         android:layout_height="wrap_content">
 
